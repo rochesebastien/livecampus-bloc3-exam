@@ -82,7 +82,8 @@ router
             secure: false, // Utiliser 'true' si HTTPS
             sameSite: 'lax'
         })
-        res.json({ token })
+        console.log(user.id)
+        res.json({ token , id : user.id})
     })
 })
 

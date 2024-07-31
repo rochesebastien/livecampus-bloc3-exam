@@ -70,8 +70,8 @@ CREATE TABLE `utilisateurs` (
 --
 
 INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `email`, `mot_de_passe`, `date_inscription`, `role`) VALUES
-(1, 'Smith', 'John', 'john@smith.com', '$2b$10$P7ZGHmSvsIaO12YOaNA6P.ReL09c/pIJrijESkCgw4U1ZZNH.R.lO', '2023-11-09 21:54:09', 'admin'),
-(2, 'Lord', 'Marc', 'marc@lord.com', '$2b$10$P7ZGHmSvsIaO12YOaNA6P.ReL09c/pIJrijESkCgw4U1ZZNH.R.lO', '2023-11-09 21:59:23', 'utilisateur');
+(1, 'Smith', 'John', 'john@smith.com', '$2b$10$6UQGsRHPMkIjH.1RqeTN/Oo4XRCXwBJEBdOb9lNjddbRIIj3/Olk6', '2023-11-09 21:54:09', 'admin'),
+(2, 'Lord', 'Marc', 'marc@lord.com', '$2b$10$6UQGsRHPMkIjH.1RqeTN/Oo4XRCXwBJEBdOb9lNjddbRIIj3/Olk6', '2023-11-09 21:59:23', 'utilisateur');
 
 --
 -- Index pour les tables déchargées
@@ -109,3 +109,20 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+# Emprunts
+CREATE TABLE `emprunts` (
+  `id_emprunt` int NOT NULL AUTO_INCREMENT,
+  `id_utilisateur` int NOT NULL,
+  `id_livre` int NOT NULL,
+  `date_emprunt` DATE NOT NULL,
+  `date_retour_prevue` DATE NOT NULL,
+  `date_retour_effective` DATE NULL,
+    FOREIGN KEY (`id_utilisateur`) REFERENCES `utilisateurs`(`id`),
+    FOREIGN KEY (`id_livre`) REFERENCES `livres`(`id`),
+    PRIMARY KEY (`id_emprunt`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+SELECT * FROM livres WHERE statut = "disponible"

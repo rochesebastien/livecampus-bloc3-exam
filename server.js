@@ -2,12 +2,14 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const booksrouter = require('./router/books')
 const usersRouter = require('./router/users')
+const empruntsRouter = require('./router/emprunts')
 const cors = require('cors')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken')
 const PORT = process.env.PORT || 3000
 const db = require('./services/database')
+const helmet = require('helmet')
 
 const JWT_SECRET = "HelloThereImObiWan"
 function authenticateToken(req, res, next) {
@@ -27,24 +29,42 @@ const corsOptions = {
     optionsSuccessStatus: 204
 }
 
-express()
-.use(bodyParser.json())
-.use(cors(corsOptions))
-.use(cookieParser())
-.use('/api/books',booksrouter)
-.use('/api/users',usersRouter)
-.post('/api/logout', (req, res) => {
+const app = express()
+
+// middleware
+app.use(bodyParser.json())
+app.use(cors(corsOptions))
+app.use(cookieParser())
+
+// rooter
+app.use('/api/books',booksrouter)
+app.use('/api/users',usersRouter)
+app.use('/api/emprunts', empruntsRouter)
+
+// helmet
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                "script-src": ["'self'", "http://localhost:5173"],
+            },
+        },
+    }),
+);
+
+app.post('/api/logout', (req, res) => {
     req.session.destroy()
     res.json({ message: 'Déconnexion réussie' })
-})
-.get('/api/session', authenticateToken,(req, res) => {
+});
+
+app.get('/api/session', authenticateToken,(req, res) => {
     if (req?.user) {
         res.json({ user: req.user })
     } else {
         res.status(401).json({ message: 'Non authentifié' })
     }
 })
-.get('/api/statistics', (req, res) => {
+app.get('/api/statistics', (req, res) => {
     const totalBooksQuery = 'SELECT COUNT(*) AS total_books FROM livres'
     const totalUsersQuery = 'SELECT COUNT(*) AS total_users FROM utilisateurs'
 
@@ -59,12 +79,16 @@ express()
         })
     })
 })
-.use(express.static(path.join(__dirname, "./webpub")))
-.get("*", (_, res) => {
-    res.sendFile(
-      path.join(__dirname, "./webpub/index.html")
-    )
-})
-.listen(PORT, () => {
+
+// app.use(express.static(path.join(__dirname, "./webpub")))
+// .get("*", (_, res) => {
+//     res.sendFile(
+//       path.join(__dirname, "./webpub/index.html")
+//     )
+// })
+
+app.listen(PORT, () => {
     console.info(`Serveur démarré sur le port ${PORT}`)
 })
+
+module.exports = app;

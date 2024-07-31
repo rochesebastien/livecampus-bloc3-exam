@@ -6,6 +6,7 @@ const Login = ({setUserT}) => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const navigate = useNavigate()
+    const base = import.meta.env.VITE_BASE_API
 
     const handleSubmit = async (e) => {
         e.preventDefault()

@@ -9,7 +9,7 @@ const BookDetails = () => {
     const [userRole, setUserRole] = useState('')
 
     useEffect(() => {
-        fetch(`${appbase}api/books/${bookId}`, {
+        fetch(`${base}api/books/${bookId}`, {
             credentials: 'include'
         })
             .then(response => response.json())
